@@ -1,0 +1,75 @@
+import java.util.Random;
+import java.util.Scanner;
+
+public class Emcha {
+
+    static int calculateMaxGuesses(int lowerBound, int upperBound) {
+        // Formula for calculating max guesses (a simple logarithmic formula)
+        return (int) Math.ceil(Math.log(upperBound - lowerBound + 1) / Math.log(2));
+    }
+
+    static int calculateScore(int difference, int maxGuesses, int attempt) {
+        // Custom formula for calculating score based on difference and number of attempts
+        return 100 - (difference * 10) - ((maxGuesses - attempt) * 5);
+    }
+
+    static String printMessage(Poruka poruka) {
+        switch (poruka) {
+            case TACAN:
+                return "Congratulations! You guessed the number.";
+            case PREMALI:
+                return "Too small! Try again.";
+            case PREVELIKI:
+                return "Too large! Try again.";
+            default:
+                return null;
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter the lower bound:");
+        int lowerBound = scanner.nextInt();
+        System.out.println("Enter the upper bound:");
+        int upperBound = scanner.nextInt();
+
+        int maxGuesses = calculateMaxGuesses(lowerBound, upperBound);
+        Random random = new Random();
+        int secretNumber = random.nextInt(upperBound - lowerBound + 1) + lowerBound;
+
+        int score = 100; // Initial score
+        int difference;
+        Poruka poruka;
+
+        for (int i = 0; i < maxGuesses; i++) {
+            System.out.println("Guess the number (between " + lowerBound + " and " + upperBound + "):");
+            int guess = scanner.nextInt();
+
+            if (guess == secretNumber) {
+                poruka = Poruka.TACAN;
+                System.out.println(printMessage(poruka));
+                break; // Exit the loop if the guess is correct
+            } else if (guess < secretNumber) {
+                poruka = Poruka.PREMALI;
+                System.out.println(printMessage(poruka));
+            } else {
+                poruka = Poruka.PREVELIKI;
+                System.out.println(printMessage(poruka));
+            }
+
+            difference = Math.abs(secretNumber - guess);
+            score = calculateScore(difference, maxGuesses, i + 1);
+            System.out.println("Your score is now: " + score);
+        }
+
+        System.out.println("The correct number was: " + secretNumber);
+        scanner.close();
+    }
+}
+
+enum Poruka {
+    TACAN,
+    PREVELIKI,
+    PREMALI
+}
