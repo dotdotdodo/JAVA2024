@@ -91,10 +91,10 @@ public class Emcha {
             System.out.println("Tvoj score sada: " + score);
         }
         System.out.println("tacan broj je:" + kocka);
-        if(score>300) {
+        if(score>150) {
             System.out.println("odlicno");
         }
-        else if(score>200 && score <300)
+        else if(score>50 && score <100)
         {
             System.out.println("delimicno dobro");
         }
