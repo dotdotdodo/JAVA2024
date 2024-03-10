@@ -3,73 +3,103 @@ import java.util.Scanner;
 
 public class Emcha {
 
-    static int calculateMaxGuesses(int lowerBound, int upperBound) {
-        // Formula for calculating max guesses (a simple logarithmic formula)
-        return (int) Math.ceil(Math.log(upperBound - lowerBound + 1) / Math.log(2));
+    enum Poruka
+    {
+        Tacan,
+        Preveliki,
+        Premali
     }
-
-    static int calculateScore(int difference, int maxGuesses, int attempt) {
-        // Custom formula for calculating score based on difference and number of attempts
-        return 100 - (difference * 10) - ((maxGuesses - attempt) * 5);
-    }
-
-    static String printMessage(Poruka poruka) {
-        switch (poruka) {
-            case TACAN:
-                return "Congratulations! You guessed the number.";
-            case PREMALI:
-                return "Too small! Try again.";
-            case PREVELIKI:
-                return "Too large! Try again.";
-            default:
-                return null;
+    static String printMessage(Poruka poruka)
+    {
+        switch (poruka)
+        {
+            case Premali ->
+            {
+                return "Premali broj!";
+            }
+            case Preveliki ->
+            {
+                return  "Preveliki broj!";
+            }
+            case Tacan ->
+            {
+                return "Tacan broj!";
+            }
+            default -> {
+            return "nepoznata vrednost";
+            }
         }
     }
+        static int izracunajNajvisePogadjanja(int donjaGranica, int gornjaGranica)
+        {
+            return (int)Math.ceil(Math.log(gornjaGranica-donjaGranica+1)/Math.log(2));
+        }
+        static int izracunajScore(int razlika, int maxPogadjanje, int pokusaj)
+        {
+            return 100 - (razlika * 10) - ((maxPogadjanje-pokusaj)*5);
+        }
 
     public static void main(String[] args) {
+
+
         Scanner scanner = new Scanner(System.in);
-
-        System.out.println("Enter the lower bound:");
-        int lowerBound = scanner.nextInt();
-        System.out.println("Enter the upper bound:");
-        int upperBound = scanner.nextInt();
-
-        int maxGuesses = calculateMaxGuesses(lowerBound, upperBound);
+        System.out.println("Unesi donju granicu:");
+        int donjaGranica = scanner.nextInt();
+        System.out.println("Unesi gornju granicu");
+        int gornjaGranica = scanner.nextInt();
+        int brojPokusaja = izracunajNajvisePogadjanja(donjaGranica,gornjaGranica);
         Random random = new Random();
-        int secretNumber = random.nextInt(upperBound - lowerBound + 1) + lowerBound;
-
-        int score = 100; // Initial score
-        int difference;
+        int kocka;
+        kocka = random.nextInt(gornjaGranica-donjaGranica + 1) + donjaGranica;
+        int razlika;
+        int score = 100;
         Poruka poruka;
-
-        for (int i = 0; i < maxGuesses; i++) {
-            System.out.println("Guess the number (between " + lowerBound + " and " + upperBound + "):");
-            int guess = scanner.nextInt();
-
-            if (guess == secretNumber) {
-                poruka = Poruka.TACAN;
+        System.out.println("broj pokusaja: " + brojPokusaja);
+        for (int i = 0; i < brojPokusaja; i++) {
+            System.out.println("pogodi broj izmedju " + donjaGranica + " i " + gornjaGranica);
+            int pokusaj = scanner.nextInt();
+            if(pokusaj<donjaGranica)
+            {
+                System.out.println("uneli ste broj manji od donje granice. Koristite mozak sledeci put");
+                score=-1000;
+                System.exit(0);
+            }
+            if(pokusaj>gornjaGranica)
+            {
+                System.out.println("uneli ste broj veci od gornje granice. Koristite mozak sledeci put");
+                score=-1000;
+                System.exit(0);
+            }
+            if(pokusaj == kocka)
+            {
+                poruka=Poruka.Tacan;
                 System.out.println(printMessage(poruka));
-                break; // Exit the loop if the guess is correct
-            } else if (guess < secretNumber) {
-                poruka = Poruka.PREMALI;
-                System.out.println(printMessage(poruka));
-            } else {
-                poruka = Poruka.PREVELIKI;
+                break;
+            }
+            else if (pokusaj < kocka)
+            {
+                poruka=Poruka.Premali;
                 System.out.println(printMessage(poruka));
             }
-
-            difference = Math.abs(secretNumber - guess);
-            score = calculateScore(difference, maxGuesses, i + 1);
-            System.out.println("Your score is now: " + score);
+            else
+            {
+                poruka=Poruka.Preveliki;
+                System.out.println(printMessage(poruka));
+            }
+            razlika=Math.abs(kocka-pokusaj);
+            score= izracunajScore(razlika,brojPokusaja,i+1);
+            System.out.println("Tvoj score sada: " + score);
         }
-
-        System.out.println("The correct number was: " + secretNumber);
-        scanner.close();
+        System.out.println("tacan broj je:" + kocka);
+        if(score>300) {
+            System.out.println("odlicno");
+        }
+        else if(score>200 && score <300)
+        {
+            System.out.println("delimicno dobro");
+        }
+        else {
+            System.out.println("lose, koristite mozak sledeci put");
+        }
     }
-}
-
-enum Poruka {
-    TACAN,
-    PREVELIKI,
-    PREMALI
 }
